@@ -1,0 +1,21 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  cmd = "go build -o ./tmp/app ./cmd/api"
+  bin = "tmp/app"
+  delay = 1000
+  kill_delay = 500
+  send_interrupt = true
+  stop_on_error = true
+  exclude_dir = ["tmp", "vendor"]
+  include_ext = ["go"]
+
+[log]
+  time = true
+
+[color]
+  main = "cyan"
+  watcher = "yellow"
+  build = "green"
+  runner = "magenta"
