@@ -4,18 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sahilkarwasra/moepay/internal/models"
 	"github.com/sahilkarwasra/moepay/internal/service"
 	"github.com/sahilkarwasra/moepay/internal/utils"
 )
-
-type SendOtpRequest struct {
-	PhoneNumber string `json:"phone_number" binding:"required"`
-}
-
-type VerifyOtpRequest struct {
-	PhoneNumber string `json:"phone_number" binding:"required"`
-	Otp         string `json:"otp" binding:"required"`
-}
 
 type AuthHandler struct {
 	userService *service.UserService
@@ -29,7 +21,7 @@ func NewAuthHandler(userService *service.UserService) *AuthHandler {
 
 func (h *AuthHandler) SendOTP(c *gin.Context) {
 
-	var req SendOtpRequest
+	var req models.SendOtpRequest
 
 	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
 		utils.BadRequest(c, "Invalid request body")
@@ -50,4 +42,28 @@ func (h *AuthHandler) SendOTP(c *gin.Context) {
 		"expires_in":   "10 Minutes",
 	})
 
+}
+
+func (h *AuthHandler) VerifyOTP(c *gin.Context) {
+	var req models.VerifyOtpRequest
+
+	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
+		utils.BadRequest(c, "Invalid request body")
+		return
+	}
+
+	ctx := c.Request.Context()
+
+	result, err := h.userService.VerifyOtpRequest(ctx, req.PhoneNumber, req.Otp)
+
+	if err != nil {
+		utils.InternalServerError(c, err.Error())
+		return
+	}
+
+	utils.Success(c, "OTP Verified Successfully", http.StatusOK, gin.H{
+		"access_token":  result.AccessToken,
+		"refresh_token": result.RefreshToken,
+		"is_user_new":   result.IsUserNew,
+	})
 }

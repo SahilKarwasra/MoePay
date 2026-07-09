@@ -32,12 +32,13 @@ func main() {
 
 	userCollection := db.Collection(config.UsersCollections)
 	otpCollection := db.Collection(config.OtpCollections)
-	// tokenCollection := database.Collection(config.TokenCollection)
+	tokenCollection := db.Collection(config.TokenCollection)
 
 	userRepo := mongo.NewUserMongoRepository(userCollection)
 	otpRepo := mongo.NewOtpMongoRepository(otpCollection)
+	tokenRepo := mongo.NewTokenMongoRepository(tokenCollection)
 
-	userService := service.NewUserService(userRepo, otpRepo)
+	userService := service.NewUserService(userRepo, otpRepo, tokenRepo)
 
 	routes.SetupRouter(userService)
 

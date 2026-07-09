@@ -35,6 +35,7 @@ func SetupRouter(
 	auth := api.Group("/auth")
 	{
 		auth.POST("/send-otp", authHandler.SendOTP)
+		auth.POST("verify-otp", authHandler.VerifyOTP)
 	}
 
 	return engine

@@ -14,3 +14,18 @@ type Otp struct {
 	CreatedAt   time.Time          `bson:"created_at" json:"created_at"`
 	ExpiresAt   time.Time          `bson:"expires_at" json:"expires_at"`
 }
+
+type SendOtpRequest struct {
+	PhoneNumber string `json:"phone_number" binding:"required"`
+}
+
+type VerifyOtpRequest struct {
+	PhoneNumber string `json:"phone_number" binding:"required"`
+	Otp         string `json:"otp" binding:"required"`
+}
+
+type VerifyOTPResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	IsUserNew    bool   `json:"is_user_new"`
+}

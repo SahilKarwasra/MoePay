@@ -142,3 +142,23 @@ func (r *UserMongoRepository) DeleteUser(
 
 	return nil
 }
+
+func (r *UserMongoRepository) GetUserByPhoneNumber(
+	ctx context.Context,
+	phoneNumber string,
+) (*models.User, error) {
+	var user models.User
+
+	err := r.collection.
+		FindOne(ctx, bson.M{"phone_number": phoneNumber}).
+		Decode(&user)
+
+	if err != nil {
+		if errors.Is(err, mongoDriver.ErrNoDocuments) {
+			return nil, repository.ErrUserNotFound
+		}
+		return nil, err
+	}
+
+	return &user, nil
+}
