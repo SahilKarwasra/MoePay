@@ -41,15 +41,13 @@ func (r *OtpMongoRepository) InsertOne(
 	return err
 }
 
-func (r *OtpMongoRepository) FindOtpByPhoneNumberAndOtp(ctx context.Context, phoneNumber string, otp string) (*models.Otp, error) {
+func (r *OtpMongoRepository) FindOtpByPhoneNumber(ctx context.Context, phoneNumber string) (*models.Otp, error) {
 	var otpDoc models.Otp
-	err := r.collection.FindOne(ctx, bson.D{
-		{Key: "phone_number", Value: phoneNumber},
-		{Key: "otp", Value: otp},
+	err := r.collection.FindOne(ctx, bson.M{
+		"phone_number": phoneNumber,
 	}).Decode(&otpDoc)
 
 	return &otpDoc, err
-
 }
 
 func (r *OtpMongoRepository) UpdateOne(ctx context.Context, otp *models.Otp) error {

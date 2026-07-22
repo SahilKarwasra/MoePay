@@ -72,11 +72,16 @@ func (s *UserService) VerifyOtpRequest(ctx context.Context, phoneNumber string, 
 	}
 
 	// find otp
-	otpDoc, err := s.otpRepo.FindOtpByPhoneNumberAndOtp(ctx, phoneNumber, otp)
+	otpDoc, err := s.otpRepo.FindOtpByPhoneNumber(ctx, phoneNumber)
 
 	// checking for error and not found
 	if err != nil {
 		return models.VerifyOTPResponse{}, repository.ErrOtpNotFound
+	}
+
+	// checking if otp matches
+	if otpDoc.Otp != otp {
+		return models.VerifyOTPResponse{}, repository.ErrInvalidOtp
 	}
 
 	// checking if otp is used or not
